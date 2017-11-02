@@ -23,8 +23,7 @@ fn xmas_days(day: usize) {
         println!("There are only 12 days of christmas");
         return
     }
-    // TODO: implement
-    let days = ["first", "second", "third", "fourth", "fifth", "sixth", 
+    let days = ["first", "second", "third", "fourth", "fifth", "sixth",
                 "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth"];
     let gifts = ["a partridge in a pear tree",
                 "two turtle doves",
