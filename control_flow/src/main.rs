@@ -19,8 +19,34 @@ fn fibonacci(n: usize) -> usize {
 }
 
 fn xmas_days(day: usize) {
+    if day > 11 {
+        println!("There are only 12 days of christmas");
+        return
+    }
     // TODO: implement
-    ()
+    let days = ["first", "second", "third", "fourth", "fifth", "sixth", 
+                "seventh", "eighth", "ninth", "tenth", "eleventh", "twelfth"];
+    let gifts = ["a partridge in a pear tree",
+                "two turtle doves",
+                "three french hens",
+                "four calling birds",
+                "five golden rings",
+                "six geese a laying",
+                "seven swans a swimming",
+                "eight maids a milking",
+                "nine ladies dancing",
+                "ten lords a leaping",
+                "eleven pipers piping",
+                "twelve drummers drumming"];
+
+    let mut i = day;
+    println!("On the {} day of christmas, my true love gave to me:", days[i]);
+    loop {
+        println!("{}", gifts[i]);
+        if i == 0 { break; }
+        if i == 1 { print!("and "); }
+        i -= 1;
+    }
 }
 
 fn main() {
@@ -35,4 +61,10 @@ fn main() {
     for i in 0..10 {
         println!("fibonacci number {} is {}", i, fibonacci(i));
     }
+    println!("");
+    println!("12 days of christmas");
+    xmas_days(0);
+    xmas_days(1);
+    xmas_days(6);
+    xmas_days(11);
 }
