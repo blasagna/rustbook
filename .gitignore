@@ -10,4 +10,4 @@
 **/*.rs.bk
 
 # intellij proj files
-   *.idea
+.idea
