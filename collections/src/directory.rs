@@ -7,13 +7,12 @@ pub struct Company {
 
 pub struct Department {
     name: String,
-    employees: Vec<&Employee>,
+    employees: Vec<Employee>,
 }
 
 pub struct Employee {
     name: String,
     title: String,
-    manager: &Employee,
 }
 
 impl Employee {
@@ -22,10 +21,6 @@ impl Employee {
             name: name.to_string(),
             title: title.to_string(),
         }
-    }
-
-    pub fn set_manager(&mut self, manager: &Employee) {
-        self.manager = manager;
     }
 }
 
@@ -37,13 +32,21 @@ impl Department {
         }
     }
 
-    fn add_employee(&mut self, empl: &Employee) {
+    pub fn add_employee(&mut self, empl: Employee) {
         self.employees.push(empl);
     }
 
-    pub fn show(&self) {
-        println!("department {}:", self.name);
+    pub fn add_employees(&mut self, empls: Vec<Employee>) {
+        for empl in empls {
+            self.add_employee(empl);
+        }
+    }
 
+    pub fn show(&self) {
+        println!("department {}", self.name);
+        for empl in &self.employees {
+            println!(" - {} ({})", empl.name, empl.title); 
+        }
     }
 }
 
@@ -52,30 +55,25 @@ impl Company {
   pub fn new(name: &str) -> Company {
     Company {
         name: name.to_string(),
-        directory: HashMap::new()
+        departments: HashMap::new()
     }
   }
 
-  pub fn add(&mut self, empl: Employee, dept: &str) {
-    let list = self.directory.entry(dept.to_string()).or_insert(vec![]);
-    list.push(empl));
+  pub fn add_dept(&mut self, dept: Department) {
+    self.departments.insert(dept.name.clone(), dept);
   }
 
   pub fn show_dept(&self, name: &str) {
-    match self.directory.get(name) {
-      None => println!(" - No employee records for department {}", name),
-           Some(empls) => {
-             for empl in empls {
-               println!(" - {}", empl);
-             }
-           }
+    match self.departments.get(name) {
+        None => println!("No employee records for department {}", name),
+        Some(dept) => dept.show(),
     };
   }
-
+  
   pub fn show_all(&self) {
+    println!("Company {}", self.name);
     let mut n = 0;
-    println!("company {}:", self.name);
-    for (dept, _) in &self.directory {
+    for (dept, _) in &self.departments {
       n += 1;
       self.show_dept(dept);
     }
@@ -84,4 +82,3 @@ impl Company {
     }
   }
 }
-
