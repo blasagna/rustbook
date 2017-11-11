@@ -10,6 +10,19 @@ fn main() {
   println!();
 
   let mut c = directory::Company::new("foo");
+  let mut sales = directory::Department::new("sales");
+  let mut eng = directory::Department::new("engineering");
+
+
+  let alice = directory::Employee::new("alice", "pos_a");
+  let mut bob = directory::Employee::new("bob", "pos_b");
+  bob.set_manager(&alice);
+  sales.add_employees(vec![&alice, &bob]);
+
+  let charlie = directory::Employee::new("charlie", "pos_c");
+  eng.add_employee(&charlie);
+
+  /*
   c.show_all();
   c.show_dept("bar");
   c.add("alice", "bar");
@@ -18,6 +31,7 @@ fn main() {
   c.show_dept("bar");
   c.show_dept("baz");
   c.show_all();
+  */
   println!();
 
   println!("{}", piglatin::piggify("foobar"));

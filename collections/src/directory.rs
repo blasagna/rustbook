@@ -7,36 +7,26 @@ pub struct Company {
 
 pub struct Department {
     name: String,
-    employees: Vec<String>,
+    employees: Vec<&Employee>,
 }
 
-//TODO: impl for employee, contractor, pointers needed?
-//TODO: make department adds generic across employee/contractor/intern
 pub struct Employee {
     name: String,
-    ssn: String,
     title: String,
-    location: String,
-    age: u8,
-    gender: String,
-    manager: Employee,
-    start_date: String,
+    manager: &Employee,
 }
 
-pub struct Contractor {
-    name: String,
-    employer: Company,
-    manager: Employee,
-    title: String,
-    location: String,
-}
+impl Employee {
+    pub fn new(name: &str, title: &str) -> Employee {
+        Employee {
+            name: name.to_string(),
+            title: title.to_string(),
+        }
+    }
 
-pub struct Intern {
-    name: String,
-    manager: Employee,
-    title: String,
-    location: String,
-    end_date: String,
+    pub fn set_manager(&mut self, manager: &Employee) {
+        self.manager = manager;
+    }
 }
 
 impl Department {
@@ -47,14 +37,13 @@ impl Department {
         }
     }
 
-    pub fn add_employee(&mut self, name: &str) {
-        self.employees.push(name);
+    fn add_employee(&mut self, empl: &Employee) {
+        self.employees.push(empl);
     }
 
-    pub fn add_employees(&mut self, names: Vec<&str>) {
-        for name in names {
-            self.add_employee(name);
-        }
+    pub fn show(&self) {
+        println!("department {}:", self.name);
+
     }
 }
 
@@ -67,13 +56,12 @@ impl Company {
     }
   }
 
-  pub fn add(&mut self, employee: &str, department: &str) {
-    let list = self.directory.entry(department.to_string()).or_insert(vec![]);
-    list.push(employee.to_string());
+  pub fn add(&mut self, empl: Employee, dept: &str) {
+    let list = self.directory.entry(dept.to_string()).or_insert(vec![]);
+    list.push(empl));
   }
 
   pub fn show_dept(&self, name: &str) {
-    println!("department {}:", name);
     match self.directory.get(name) {
       None => println!(" - No employee records for department {}", name),
            Some(empls) => {
