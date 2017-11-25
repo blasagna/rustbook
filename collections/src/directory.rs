@@ -50,7 +50,6 @@ impl Department {
     }
 }
 
-// TODO: add tests
 impl Company {
   pub fn new(name: &str) -> Company {
     Company {

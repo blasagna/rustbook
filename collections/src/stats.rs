@@ -7,7 +7,6 @@ mean: Option<f32>,
         mode: Option<i32>
 }
 
-// TODO: add tests
 pub fn summary_stats(numbers: Vec<i32>) -> Stats {
   let mut mean = None;
   let mut median = None;
