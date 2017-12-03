@@ -1,10 +1,12 @@
 use std::fs::File;
 use std::io::prelude::*;
 use std::error::Error;
+use std::env;
 
 pub struct Config {
-    query: String,
-    filename: String,
+    pub query: String,
+    pub filename: String,
+    pub ignore_case: bool,
 }
 
 impl Config {
@@ -16,15 +18,13 @@ impl Config {
         let query = args[1].clone();
         let filename = args[2].clone();
 
-        Ok(Config { query, filename })
-    }
+        let ignore_case = !(env::var("GREP_IGNORE_CASE").is_err());
 
-    pub fn get_query(&self) -> &str {
-        &self.query
-    }
-
-    pub fn get_filename(&self) -> &str {
-        &self.filename
+        Ok(Config {
+            query,
+            filename,
+            ignore_case,
+        })
     }
 }
 
@@ -34,7 +34,13 @@ pub fn run(config: Config) -> Result<(), Box<Error>> {
     let mut contents = String::new();
     f.read_to_string(&mut contents)?;
 
-    for line in search(&config.query, &contents) {
+    let results = if config.ignore_case {
+        search_ignore_case(&config.query, &contents)
+    } else {
+        search(&config.query, &contents)
+    };
+
+    for line in results {
         println!("{}", line);
     }
 
@@ -46,6 +52,18 @@ pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
 
     for line in contents.lines() {
         if line.contains(query) {
+            results.push(line);
+        }
+    }
+    results
+}
+
+pub fn search_ignore_case<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
+    let query_lower: String = query.to_lowercase();
+    let mut results = Vec::new();
+
+    for line in contents.lines() {
+        if line.to_lowercase().contains(&query_lower) {
             results.push(line);
         }
     }
@@ -85,5 +103,20 @@ bar
 matches foo";
 
         assert_eq!(vec!["no foo", "matches foo"], search(query, contents));
+    }
+
+    #[test]
+    fn case_insensitive() {
+        let query = "FOo";
+        let contents = "some
+more
+words
+but one line with foo
+and one with Foo";
+
+        assert_eq!(
+            vec!["but one line with foo", "and one with Foo"],
+            search_ignore_case(query, contents)
+        );
     }
 }
