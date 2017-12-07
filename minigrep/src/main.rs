@@ -10,6 +10,7 @@ fn main() {
 
     let config = Config::new(&args).unwrap_or_else(|err| {
         eprintln!("problem parsing arguments: {}", err);
+        eprintln!("usage: {} QUERY FILE", args[0]);
         process::exit(1);
     });
 
