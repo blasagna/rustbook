@@ -6,14 +6,13 @@ use std::process;
 use minigrep::Config;
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
-
-    let config = Config::new(&args).unwrap_or_else(|err| {
+    let config = Config::new(env::args()).unwrap_or_else(|err| {
         eprintln!("problem parsing arguments: {}", err);
-        eprintln!("usage: {} QUERY FILE", args[0]);
+        eprintln!("usage: minigrep QUERY FILE");
         process::exit(1);
     });
 
+    // TODO: search mulitple files using wildcards
     println!("searching for: {}", config.query);
     println!("in file: {}", config.filename);
 

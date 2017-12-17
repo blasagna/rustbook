@@ -10,13 +10,19 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(args: &[String]) -> Result<Config, &'static str> {
-        if args.len() < 3 {
-            return Err("not enough arguments");
-        }
+    pub fn new(mut args: env::Args) -> Result<Config, &'static str> {
+        // discard program name
+        args.next();
 
-        let query = args[1].clone();
-        let filename = args[2].clone();
+        let query = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Missing query string"),
+        };
+
+        let filename = match args.next() {
+            Some(arg) => arg,
+            None => return Err("Missing file name"),
+        };
 
         let ignore_case = !(env::var("GREP_IGNORE_CASE").is_err());
 
@@ -48,14 +54,7 @@ pub fn run(config: Config) -> Result<(), Box<Error>> {
 }
 
 pub fn search<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
-    let mut results = Vec::new();
-
-    for line in contents.lines() {
-        if line.contains(query) {
-            results.push(line);
-        }
-    }
-    results
+    contents.lines().filter(|line| line.contains(query)).collect()
 }
 
 pub fn search_ignore_case<'a>(query: &str, contents: &'a str) -> Vec<&'a str> {
