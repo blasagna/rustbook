@@ -1,0 +1,6 @@
+[package]
+name = "cons_list"
+version = "0.1.0"
+authors = ["Bob DiMaiolo <bob@cognescent.com>"]
+
+[dependencies]
