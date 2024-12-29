@@ -11,3 +11,7 @@
 
 # intellij proj files
 .idea
+
+# exe and debug filess
+.pdb
+.exe
