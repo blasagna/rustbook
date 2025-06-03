@@ -1,6 +1,9 @@
 // define a struct's fields with types
 struct User {
     active: bool,
+    // NOTE: using String instead of &str string slice deliberately.
+    // We want each struct instance to own all of its data and for that data
+    // to be valid for as long as the entire struct is valid.
     username: String,
     email: String,
     sign_in_count: u64,
@@ -53,6 +56,7 @@ fn define_and_instantiate_structs() {
     println!("3's email: {}", user3.email);
 
     // struct update syntax
+    // Note that the struct update syntax uses = like an assignment; this is because it moves the data.
     // Note that this moves the data from user1 to user4; it does not copy it.
     let user4 = User {
         email: String::from("another@example.com"),
@@ -75,8 +79,74 @@ fn define_and_instantiate_structs() {
     let _subject = AlwaysEqual;
 }
 
+#[derive(Debug)]
+struct Rectangle {
+    width: u32,
+    height: u32,
+}
+
+impl Rectangle {
+    // NOTE: &self is shorthand for self: &Self parameter.
+    // Within an impl block, type Self is an alias for the type that the impl block is for.
+    fn area(&self) -> u32 {
+        self.width * self.height
+    }
+
+    fn width(&self) -> bool {
+        self.width > 0
+    }
+
+    fn can_hold(&self, other: &Rectangle) -> bool {
+        let holds_original = self.width >= other.width && self.height >= other.height;
+        let holds_rotated = self.width >= other.height && self.height >= other.width;
+
+        holds_original || holds_rotated
+    }
+
+    // Example of an associated function without a self parameter.
+    // Useful for factories.
+    fn square(size: u32) -> Self {
+        Self {
+            width: size,
+            height: size,
+        }
+    }
+}
+
 fn main() {
     define_and_instantiate_structs();
 
-    // continue with section An Example Program Using Structs
+    let rect1 = Rectangle {
+        width: 30,
+        height: 50,
+    };
+    println!("rectangle 1 is {rect1:?}");
+    // we can also use the dbg macro, which outputs to stderr.
+    // NOTE: dbg takes ownership, unlike println which takes a reference.
+    dbg!(&rect1);
+    println!("The area of rectangle 1 is {} square units.", rect1.area());
+
+    if rect1.width() {
+        println!("rectangle 1 has nonzero width, which is {}", rect1.width);
+    }
+
+    let rect2 = Rectangle {
+        width: 10,
+        height: 40,
+    };
+    let rect3 = Rectangle {
+        width: 60,
+        height: 45,
+    };
+    let rect4 = Rectangle {
+        width: 49,
+        height: 29,
+    };
+
+    println!("Can rect1 hold rect2? {}", rect1.can_hold(&rect2));
+    println!("Can rect1 hold rect3? {}", rect1.can_hold(&rect3));
+    println!("Can rect1 hold rect4? {}", rect1.can_hold(&rect4));
+
+    let square1 = Rectangle::square(3);
+    println!("square1 is {square1:?}");
 }
