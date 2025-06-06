@@ -94,7 +94,7 @@ fn message_example() {
 //     Some(T),
 //     None,
 // }
-use std::option::Option;
+use std::{ops::ControlFlow, option::Option};
 
 fn option_example() {
     let some_number = Option::Some(5);
@@ -113,10 +113,82 @@ fn option_example() {
 }
 
 // The match control flow construct.
-// continue with chapter 6.2
+// The power of match comes from the expressiveness of the patterns and the fact that the compiler confirms that all possible cases are handled.
+#[derive(Debug)] // so we can inspect the state in a minute
+enum UsState {
+    Alabama,
+    Alaska,
+    // --snip--
+}
+enum Coin {
+    Penny,
+    Nickel,
+    Dime,
+    Quarter(UsState),
+}
+
+fn value_in_cents(coin: Coin) -> u8 {
+    match coin {
+        Coin::Penny => {
+            println!("Lucky penny!");
+            1
+        }
+        Coin::Nickel => 5,
+        Coin::Dime => 10,
+        Coin::Quarter(state) => {
+            // A match arm can bind to the parts of the values that match the pattern.
+            // This is how we can extract values out of enum variants
+            println!("State quarter from {state:?}!");
+            25
+        }
+    }
+}
+
+fn plus_one_maybe(x: Option<i32>) -> Option<i32> {
+    match x {
+        Some(i) => Some(i + 1),
+        None => None,
+        /*
+        NOTE: other => something, can be used as a catch-all pattern.
+        NOTE:  _ => something, is a special pattern that matches any value and does not bind to that value. This tells Rust we aren’t going to use the value, so Rust won’t warn us about an unused variable.
+        NOTE: _ => (), () is a unit value used to not run any code.
+        */
+    }
+}
+
+fn match_example() {
+    println!("Value of penny: {}", value_in_cents(Coin::Penny));
+    println!("Value of nickel: {}", value_in_cents(Coin::Nickel));
+    println!("Value of dime: {}", value_in_cents(Coin::Dime));
+
+    let coin = Coin::Quarter(UsState::Alaska);
+    let cents = value_in_cents(coin);
+    println!("Value of Alaska quarter in cents: {}", cents);
+
+    let five = Some(5);
+    let six = plus_one_maybe(five);
+    println!("Five plus one: {:?}", six.expect("should be Some"));
+    let none = plus_one_maybe(None);
+    println!("None plus one: {:?}", none);
+}
+
+// if let is a convenient way to match a single pattern and ignore the rest. It’s often used when you want to handle a specific case without needing to match all possible cases.
+fn if_let_example() {
+    let config_max = Some(3u8);
+    // match config_max {
+    //     Some(max) => println!("The maximum is configured to be {max}"),
+    //     _ => (),
+    // }
+
+    if let Some(max) = config_max {
+        println!("The maximum is configured to be {max}");
+    }
+}
 
 fn main() {
     ip_addr_example();
     message_example();
     option_example();
+    match_example();
+    if_let_example();
 }
